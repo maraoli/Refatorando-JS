@@ -1,48 +1,77 @@
-var listaNotas = {
-    secao: document.getElementsByClassName("notes")[0],
-    listaInterna: [],
-    adiciona: function(novoTitulo, novoTexto) {
-        var nota = {
-            titulo: novoTitulo,
-            texto: novoTexto,
-            editando: false
-        };
-        this.listaInterna.push(nota);
-        // atualizarSecao(this.secao);
-    },
-    remove: function(posicao) {
-        this.listaInterna.splice(posicao, 1);
-        atualizarSecao(this.secao);
-    },
-    edita: function(posicao) {
-        this.listaInterna[posicao].editando = true;
-        atualizarSecao(this.secao);
-    },
-    salva: function(posicao, novoTitulo, novoTexto) {
-        this.listaInterna[posicao].titulo = novoTitulo;
-        this.listaInterna[posicao].texto = novoTexto;
-        this.listaInterna[posicao].editando = false;
-        atualizarSecao(this.secao);
-    },
-    pega: function(posicao) {
-        return this.listaInterna[posicao];
-    },
-    contaTotal: function() {
-        return this.listaInterna.length;
-    }
-};
 
-function atualizarSecao(secao) {
-    var conteudoSecao = "";
-    // forEach, mapa, reduce
-    for (var posicao = 0; posicao < listaNotas.contaItens(); posicao++) {
-        var notaAtual = listaNotas.pegaNota(posicao);
+// const listaNotas = {
+//     secao: document.getElementsByClassName("notes")[0],
+//     listaInterna: [],
+//     adiciona:(novoTitulo, novoTexto) => {
+//         let nota = {
+//             titulo: novoTitulo,
+//             texto: novoTexto,
+//             editando: false
+//         };
+//         this.listaInterna.push(nota);
+//     },
+//     remove:(posicao) => {
+//         this.listaInterna.splice(posicao, 1);
+//         atualizarSecao(this.secao);
+//     },
+//     edita:(posicao)=> {
+//         this.listaInterna[posicao].editando = true;
+//         atualizarSecao(this.secao);
+//     },
+//     salva:(posicao, novoTitulo, novoTexto)=> {
+//         this.listaInterna[posicao].titulo = novoTitulo;
+//         this.listaInterna[posicao].texto = novoTexto;
+//         this.listaInterna[posicao].editando = false;
+//         atualizarSecao(this.secao);
+//     },
+//     // quando é uma linha de code eu posso tirar {} e coloca , no fim 
+//     pega: posicao => {return this.listaInterna[posicao];
+
+//     contaTotal: () => {return this.listaInterna.length;    
+// }
+
+const atualizaNota = (inputTitulo, textareaTexto, formulario, posicao) => {
+    let titulo = inputTitulo.value;
+    let texto = textareaTexto.value;
+
+    listaNotas.atualiza(titulo, texto, posicao);
+}
+
+const editaFormulario = (posicao) => {
+    let notaAtual = listaNotas.pegaNota(posicao);
+    notaAtual.editando = true;
+}
+
+
+
+const adicionarNota = (inputTitulo, textareaTexto, formulario, secao, posicao) => {
+    let notaAtual = listaNotas.pegaNota(posicao);
+    if (notaAtual) {
+        listaNotas.salva(posicao, inputTitulo.value, textareaTexto.value)
+    } else {
+        listaNotas.adiciona(inputTitulo.value, textareaTexto.value);
+        // limpar o formulario
+        formulario.reset();
+    }
+}
+
+const removerNota = (evento ,posicao) => {
+    evento.stopPropagation();
+    listaNotas.remove(posicao);
+}
+
+
+//  ou: const atualizarSecao = secao => { porque é so um parametro
+const atualizarSecao = (secao) => {
+    let conteudoSecao = "";
+    for (let posicao = 0; posicao < listaNotas.contaItens(); posicao++) {
+        let notaAtual = listaNotas.pegaNota(posicao);
         if (notaAtual.editando) {
             conteudoSecao += `<form class="note">
                                 <input class="note__title" type="text" name="titulo" value="${notaAtual.titulo}" placeholder="Título">
                                 <textarea class="note__body" name="texto" rows="5" placeholder="Criar uma nota...">${notaAtual.texto}</textarea>
                                 <button class="note__control" type="button" onclick="atualizaNota(this.form.titulo, this.form.texto, this.form, ${posicao})">
-                                    ${Concluído}
+                                    Concluído
                                 </button>
                              </form>`;
         } else {
@@ -55,21 +84,17 @@ function atualizarSecao(secao) {
                              </form>`;
         }
     }
-
     secao.innerHTML = conteudoSecao;
 }
 
-// 30/01/2018
-
-// apague o "notas" da funcao acima  e substitua por listaNotas.listaInterna 
-
-var listaNotas ={
+//  const pq n altero o listaNotas = {}
+const listaNotas ={
     // para atualizar a secao
     secao: document.getElementsByClassName("notes")[0],
     // var listaInterna = [];
     listaInterna: [] ,
-    adiciona:(titulo, texto)=>{
-        var nota = {
+    adiciona(titulo, texto){
+        let nota = {
             titulo: titulo,
             texto: texto,
             editando: false,
@@ -78,67 +103,28 @@ var listaNotas ={
         this.listaInterna.push(nota);
         atualizarSecao(this.secao);
     },
-    remove: (posicao) =>{
+    remove(posicao){
         this.listaInterna.splice(posicao, 1);
         atualizarSecao(this.secao);
     },
-    edita: (posicao) =>{
+    edita(posicao){
         this.listaInterna[posicao].edita = true;
         atualizarSecao(this.secao);
     },
-    salva: (posicao, novoTitulo, novoTexto)=>{
+    salva(posicao, novoTitulo, novoTexto){
         this.listaInterna[posicao].titulo = novoTitulo;
         this.listaInterna[posicao].texto = novoTexto;
         this.listaInterna[posicao].editando = false;
         atualizarSecao(this.secao);
     },
-    pegaNota:(posicao)=>{
+    pegaNota(posicao){
         return this.listaInterna[posicao];
     },
-    contaItens: ()=>{
+    contaItens(){
         return this.listaInterna.length;
     },
 }
 
-function editaFormulario(posicao) {
-    var notaAtual = listaNotas.pegaNota(posicao);
-    console.log('chamou a editaFormulario');
-    // pegar notar e setar editando = true
-    notaAtual.editando = true;
-    // listaNotas.edita(posicao);
-}
 
-// REFATORADA
-function adicionarNota(inputTitulo, textareaTexto, formulario, secao, posicao) {
-    var notaAtual = listaNotas.pegaNota(posicao);
-    if (notaAtual) {
-        listaNotas.salva(posicao, inputTitulo.value, textareaTexto.value)
-    } else {
-        listaNotas.adiciona(inputTitulo.value, textareaTexto.value);
-        // limpar o formulario
-        formulario.reset();
-    }
-}
 
-function removerNota(evento ,posicao) {
-    console.log('chamou o remove');
-    evento.stopPropagation();
-    // remover nota da lista de notas
-    listaNotas.splice(posicao, 1);
 
-    // atualizar tela
-}
-
-function atualizaNota(inputTitulo, textareaTexto, formulario, posicao) {
-    var titulo = inputTitulo.value;
-    var texto = textareaTexto.value;
-
-    listaNotas.atualiza(titulo, texto, posicao, secao);
-}
-
-// 31/01/2018
-
-//  a lista interna não pode aparecer em nenhuma parte do code
-// apenas da função que a utiliza
-// var notaAtual = listaNotas.pegaNota(posicao);
-// 

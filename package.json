@@ -10,7 +10,7 @@
     "jest": "^22.1.4"
   },
   "scripts": {
-    "build": "babel js -d lib",
+    "build": "babel js -d lib --watch",
     "test": "jest"
   },
   "repository": {
